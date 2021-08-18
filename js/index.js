@@ -2,22 +2,12 @@
 
 //variable reference to dynamic data
 let dd = document.getElementById("dynamic-data");
-// var url= this.attr('href');
-// const links =
-const links = document.getElementsByTagName('li');
-//url
-//let url = document.links.href;
+const links = document.getElementsByClassName('menu-item');
 let url = './partials/home.html';
-if (document.getElementsByClassName == "home") {
-url = './partials/home.html';
-} 
-else if (document.getElementsByClassName == "portfolio")
-{
-url = './partials/portfolio.html';
-}
+
 
 // CREATE THE FUNCTION THAT WILL LOAD THE REQUESTED PARTIAL
-function loadContent (){
+function loadContent (selectedurl){
     
    /*
    IMPORTANT NOTES:
@@ -29,11 +19,9 @@ function loadContent (){
    */
    
 
-// RUN THE fetch(urlFeed).then().then().catch()
-fetch(url)
-    .then(function(rsp)
+    // RUN THE fetch(urlFeed).then().then().catch()
+    fetch(selectedurl).then(function(rsp)
     {
-        console.log(rsp);
         //if everything is okay, then return the data to function(data) below
         if(rsp.ok){
             return rsp.text();
@@ -43,8 +31,7 @@ fetch(url)
     })
     .then(function(data)
     {
-    //create new item list
-    
+        //create new item list
         dd.innerHTML = data;
 
     })
@@ -64,44 +51,28 @@ loadContent(url);
 // CREATE THE FUNCTION THAT WILL SELECT A PARTIAL:
 function selectContent(ev)
 {
+    // PREVENT DEFAULT BEHAVIOUR OF A LINK TAG
+    ev.preventDefault();
     let currentItem = ev.target;
-   // PREVENT DEFAULT BEHAVIOUR OF A LINK TAG
-   ev.preventDefault();
-
+    let selectedLink = currentItem.href;
+    
+   
    // GET THE VALUE OF href ATTRIBUTE OF THE CLICKED LINK
    for (let i = 0; i < links.length; i++) {
+        if (links[i].hasAttribute('id')) {
+            //remove the attribute
+            links[i].removeAttribute('id');
+        }
 
-    if (links[i].hasAttribute('id')) {
-
-        //remove the attribute
-
-        links[i].removeAttribute('id');
-    }
-
-    currentItem.setAttribute('id', 'active');
-
+        currentItem.setAttribute('id', 'active');
     }   
-    if(ev.target == links[0])
-        {
-            dd.innerHTML = './partials/home.html'
-        }
-        else
-        {
-            dd.innerHTML = './partials/portfolio.html'
-        }
-        
-//    var value = currentItem.getAttribute(url);
-
-   //var value = document.links.getAttribute(url);
 
    // CALL THE FUNCTION loadContent PROVIDING THE href
    // VALUE OF THE CLICKED LINK AS THE VALUE FOR THE PARAMETER
    // OF loadContent FUNCTION.
-  // loadContent(value);
-
-
-// CLOSE YOUR FUNCTION selectContent HERE
+    loadContent(selectedLink);
 }
+
 // REGISTER links FOR CLICK EVENT WITH selectContent AS EVENT HANDLER!
 for (let i = 0; i < links.length; i++) {
     links[i].addEventListener('click', selectContent);
